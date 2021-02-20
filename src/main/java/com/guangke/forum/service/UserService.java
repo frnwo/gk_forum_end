@@ -2,6 +2,7 @@ package com.guangke.forum.service;
 
 import com.guangke.forum.mapper.UserMapper;
 import com.guangke.forum.pojo.User;
+import com.guangke.forum.util.ActivationStatus;
 import com.guangke.forum.util.ForumUtils;
 import com.guangke.forum.util.MailClient;
 import org.apache.commons.lang3.StringUtils;
@@ -82,6 +83,17 @@ public class UserService {
         return map;
     }
 
-
+    public ActivationStatus activate(int userId, String activationCode) {
+        User u = userMapper.selectById(userId);
+        if (u.getStatus() == 1) {
+            return ActivationStatus.ACTIVATION_REPEAT;
+        } else if (u.getActivationCode().equals(activationCode)) {
+            userMapper.updateStatus(userId, 1);
+            return ActivationStatus.ACTIVATION_SUCCESS;
+        } else {
+            //可能是防止激活没有这个id的用户或者伪造激活码
+            return ActivationStatus.ACTIVATION_FAILURE;
+        }
+    }
 
 }
