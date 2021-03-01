@@ -1,6 +1,8 @@
 package com.guangke.forum.service;
 
+import com.guangke.forum.mapper.LoginTicketMapper;
 import com.guangke.forum.mapper.UserMapper;
+import com.guangke.forum.pojo.LoginTicket;
 import com.guangke.forum.pojo.User;
 import com.guangke.forum.util.ActivationStatus;
 import com.guangke.forum.util.ForumUtils;
@@ -16,7 +18,7 @@ import java.util.Map;
 import java.util.Random;
 
 @Service
-public class UserService {
+public class  UserService {
 
     @Autowired
     private UserMapper userMapper;
@@ -29,6 +31,9 @@ public class UserService {
 
     @Value("${forum.path.domain}")
     private String domain;
+
+    @Autowired
+    private LoginTicketMapper loginTicketMapper;
 
     public User findUserById(int id){
         return userMapper.selectById(id);
@@ -94,6 +99,41 @@ public class UserService {
             //可能是防止激活没有这个id的用户或者伪造激活码
             return ActivationStatus.ACTIVATION_FAILURE;
         }
+    }
+
+    public Map<String, Object> login(String username, String password, int ticketSeconds) {
+        Map<String, Object> map = new HashMap<>();
+        if (StringUtils.isBlank(username)) {
+            map.put("usernameMsg", "用户名不能为空");
+            return map;
+        }
+        if (StringUtils.isBlank(password)) {
+            map.put("passwordMsg", "密码不能为空");
+            return map;
+        }
+        User user = userMapper.selectByUsername(username);
+        if (user == null) {
+            map.put("usernameMsg", "用户不存在");
+            return map;
+        }
+        if (user.getStatus() == 0) {
+            map.put("usernameMsg", "该用户未激活");
+            return map;
+        }
+        password = ForumUtils.md5(password + user.getSalt());
+        if (!user.getPassword().equals(password)) {
+            map.put("passwordMsg", "密码错误");
+            return map;
+        }
+        //到了这一步，说明用户名和密码正确，然后生成登录凭证
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setTicket(ForumUtils.generateUUID());
+        loginTicket.setStatus(0);
+        loginTicket.setExpired(new Date(System.currentTimeMillis() + ticketSeconds * 1000));
+        loginTicket.setUserId(user.getId());
+        loginTicketMapper.insertLoginTicket(loginTicket);
+        map.put("ticket", loginTicket.getTicket());
+        return map;
     }
 
 }
