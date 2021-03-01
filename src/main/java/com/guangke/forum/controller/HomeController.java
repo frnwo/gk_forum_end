@@ -5,6 +5,7 @@ import com.guangke.forum.pojo.Page;
 import com.guangke.forum.pojo.User;
 import com.guangke.forum.service.DiscussPostService;
 import com.guangke.forum.service.UserService;
+import com.guangke.forum.util.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +23,9 @@ public class HomeController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private HostHolder hostHolder;
 
     @RequestMapping(path = "/index",method = RequestMethod.GET)
     //当前页：current  每页数据：limit

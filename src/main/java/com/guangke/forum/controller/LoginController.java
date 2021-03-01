@@ -120,6 +120,11 @@ public class LoginController implements ForumConstants {
             res.put("status","ok");
             return res;
         }
-
+    }
+    @GetMapping("/logout")
+    public String logOut(@CookieValue("ticket") String ticket) {
+        userService.logOut(ticket);
+        //login有两个 重定向默认跳转方式为get
+        return "ok";
     }
 }

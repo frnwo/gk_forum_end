@@ -135,5 +135,13 @@ public class  UserService {
         map.put("ticket", loginTicket.getTicket());
         return map;
     }
+    //退出
+    public void logOut(String ticket) {
+        loginTicketMapper.updateLoginTicket(ticket,1);
+    }
+    //查询凭证
+    public LoginTicket findLoginTicket(String ticket){
+       return loginTicketMapper.selectLoginTicket(ticket);
+    }
 
 }
