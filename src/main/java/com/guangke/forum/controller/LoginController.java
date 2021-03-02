@@ -92,10 +92,10 @@ public class LoginController implements ForumConstants {
     public Map<String,Object> login(String username, String password, String code,
                                     HttpSession session,HttpServletResponse response,
                                     boolean rememberme) {
-        System.out.println(username);
-        System.out.println(password);
-        System.out.println(code);
-        System.out.println(rememberme);
+//        System.out.println(username);
+//        System.out.println(password);
+//        System.out.println(code);
+//        System.out.println(rememberme);
 
         Map<String,Object> res = new HashMap<>();
         String kaptcha = (String)session.getAttribute("kaptcha");
@@ -118,6 +118,7 @@ public class LoginController implements ForumConstants {
             cookie.setPath(contextPath);
             response.addCookie(cookie);
             res.put("status","ok");
+            res.put("user",map.get("user"));
             return res;
         }
     }

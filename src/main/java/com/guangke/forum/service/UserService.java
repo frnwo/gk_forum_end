@@ -133,6 +133,7 @@ public class  UserService {
         loginTicket.setUserId(user.getId());
         loginTicketMapper.insertLoginTicket(loginTicket);
         map.put("ticket", loginTicket.getTicket());
+        map.put("user",user);
         return map;
     }
     //退出
@@ -143,5 +144,12 @@ public class  UserService {
     public LoginTicket findLoginTicket(String ticket){
        return loginTicketMapper.selectLoginTicket(ticket);
     }
-
+    //修改密码
+    public void updatePassword(int id,String newPwd){
+        userMapper.updatePassword(id,newPwd);
+    }
+    public int updateHeaderUrl(int userId, String headerUrl) {
+        int rows = userMapper.updateHeader(userId, headerUrl);
+        return rows;
+    }
 }
