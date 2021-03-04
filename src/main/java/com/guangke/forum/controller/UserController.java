@@ -35,13 +35,13 @@ public class UserController implements ForumConstants {
     private UserService userService;
 
     @Value("${forum.path.domain}")
-    private String domain;
+    private  String domain;
 
     @Value("${server.servlet.context-path}")
-    private String context;
+    private  String context;
 
     @Value("${forum.path.uploadImage}")
-    private String uploadPath;
+    private  String uploadPath;
 
     /**
      * 修改密码
@@ -80,26 +80,39 @@ public class UserController implements ForumConstants {
         res.put("status","ok");
         return res;
     }
-    //上传头像
+//    上传头像
     @PostMapping("/upload")
     public Map<String,String> upload(MultipartFile image) {
-
         Map<String,String> res = new HashMap<>();
+        if(hostHolder.get()==null){
+            res.put("err","尚未登录");
+            return res;
+        }
         //图片为空时，中断
         if (image == null) {
             res.put("err", "图片文件不能为空");
             return res;
         }
+        String status = uploadImg(domain,context,uploadPath,image);
+        if(!status.startsWith("http")){
+            res.put("err",status);
+            return res;
+        }
+        userService.updateHeaderUrl(hostHolder.get().getId(), status);
+        res.put("status","ok");
+        res.put("headerUrl",status);
+        return res;
+    }
+//    如果文件格式错误，返回错误信息；否则返回文件的访问路径
+    public static String uploadImg(String domain,String context,String uploadPath,MultipartFile image){
         //给图片生成随机名
         String fileName = image.getOriginalFilename();
         String suffix = fileName.substring(fileName.lastIndexOf('.'));
         //后缀为空时，中断
         if (!(suffix.equals(".jpg") || suffix.equals(".png") || suffix.equals(".jpeg"))) {
-            res.put("err", "文件格式不正确");
-            return res;
+            return "文件格式不正确";
         }
         fileName = ForumUtils.generateUUID() + suffix;
-
         //将上传图片复制到本地路径
         File file = new File(uploadPath + "/" + fileName);
         try {
@@ -108,14 +121,11 @@ public class UserController implements ForumConstants {
             logger.error("图片上传失败");
             throw new RuntimeException("图片上传失败，服务器发生错误: " + e.getMessage());
         }
-
         /**
          修改用户信息中的图片路径headerUrl : http://localhost:8080/forum/user/profile/xxx.jpg
          */
         String headerUrl = domain + context + "/user/profile/" + fileName;
-        userService.updateHeaderUrl(hostHolder.get().getId(), headerUrl);
-        res.put("status","ok");
-        return res;
+        return headerUrl;
     }
     /**
      * 响应用户头像图片

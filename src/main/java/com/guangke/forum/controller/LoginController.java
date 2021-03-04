@@ -96,7 +96,6 @@ public class LoginController implements ForumConstants {
 //        System.out.println(password);
 //        System.out.println(code);
 //        System.out.println(rememberme);
-
         Map<String,Object> res = new HashMap<>();
         String kaptcha = (String)session.getAttribute("kaptcha");
         System.out.println(kaptcha);

@@ -24,14 +24,24 @@ public class DiscussPost {
 
     private double score;
 
-    private String post_img;
+    private String postImg;
 
-    public String getPostImg() {
-        return post_img;
+    private String postArea;
+
+    public String getPostArea() {
+        return postArea;
     }
 
-    public void setPostImg(String post_img) {
-        this.post_img = post_img;
+    public void setPostArea(String postArea) {
+        this.postArea = postArea;
+    }
+
+    public String getPostImg() {
+        return postImg;
+    }
+
+    public void setPostImg(String postImg) {
+        this.postImg = postImg;
     }
 
     public int getId() {
@@ -118,7 +128,8 @@ public class DiscussPost {
                 ", createTime=" + createTime +
                 ", commentCount=" + commentCount +
                 ", score=" + score +
-                ", post_img='" + post_img + '\'' +
+                ", postImg='" + postImg + '\'' +
+                ", postArea='" + postArea + '\'' +
                 '}';
     }
 }

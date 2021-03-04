@@ -2,6 +2,7 @@ package com.guangke.forum;
 
 import com.guangke.forum.mapper.DiscussPostMapper;
 import com.guangke.forum.pojo.DiscussPost;
+import com.guangke.forum.util.SensitiveFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,9 @@ import java.util.List;
 
 @SpringBootTest
 public class MapperTest {
+
+    @Autowired
+    private SensitiveFilter sensitiveFilter;
 
     @Autowired
     private DiscussPostMapper discussPostMapper;
@@ -24,5 +28,11 @@ public class MapperTest {
         System.out.println(rows);
     }
 
+    @Test
+    public void testSensitiveFilter(){
+        String text = "垃圾东西";
+        text = sensitiveFilter.filter(text);
+        System.out.println(text);
+    }
 
 }
