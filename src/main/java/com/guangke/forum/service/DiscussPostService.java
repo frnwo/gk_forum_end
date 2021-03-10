@@ -18,11 +18,11 @@ public class DiscussPostService {
     @Autowired
     private SensitiveFilter sensitiveFilter;
 
-    public List<DiscussPost> findDiscussPosts(int userId,int offset,int limit){
-        return discussPostMapper.selectDiscussPosts(userId,offset,limit);
+    public List<DiscussPost> findDiscussPosts(int userId,int offset,int limit,String postArea){
+        return discussPostMapper.selectDiscussPosts(userId,offset,limit,postArea);
     }
-    public int findDiscussPostRows(int userID){
-        return discussPostMapper.selectDiscussPostRows(userID);
+    public int findDiscussPostRows(int userID,String postArea){
+        return discussPostMapper.selectDiscussPostRows(userID,postArea);
     }
 
 //    发布帖子
@@ -37,6 +37,12 @@ public class DiscussPostService {
         post.setContent(sensitiveFilter.filter(post.getContent()));
         post.setTitle(sensitiveFilter.filter(post.getTitle()));
         return discussPostMapper.insertDiscussPost(post);
+    }
+    public DiscussPost findDiscussPostById(int id) {
+        return discussPostMapper.selectDiscussPostById(id);
+    }
+    public int updateCommentCount(int postId, int count) {
+        return discussPostMapper.updateCommentCount(postId, count);
     }
 }
 

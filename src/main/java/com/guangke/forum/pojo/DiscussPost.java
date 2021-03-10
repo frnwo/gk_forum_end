@@ -1,5 +1,7 @@
 package com.guangke.forum.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 
@@ -17,7 +19,7 @@ public class DiscussPost {
     private int type; //0普通 1置顶
 
     private int status;//0正常  1精华  2拉黑
-
+    @JsonFormat(timezone = "GMT+8")
     private Date createTime;
 
     private int commentCount;

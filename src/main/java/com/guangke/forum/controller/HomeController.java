@@ -29,10 +29,10 @@ public class HomeController {
 
     @RequestMapping(path = "/index",method = RequestMethod.GET)
     //当前页：current  每页数据：limit
-    public List<Map<String,Object>> index(Page page){
-        page.setRows(discussPostService.findDiscussPostRows(0));
+    public List<Map<String,Object>> index(Page page,String postArea){
+        page.setRows(discussPostService.findDiscussPostRows(0,postArea));
 
-        List<DiscussPost> posts = discussPostService.findDiscussPosts(0,page.getOffset(),page.getLimit());
+        List<DiscussPost> posts = discussPostService.findDiscussPosts(0,page.getOffset(),page.getLimit(),postArea);
         List<Map<String,Object>> resList = new ArrayList<>();
 
         if(posts.size()!=0){

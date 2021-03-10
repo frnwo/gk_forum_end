@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.guangke.forum.mapper.DiscussPostMapper">
     <sql id="selectFields">
-        id,user_id,title,content,type,status,create_time,comment_count,score,post_img
+        id,user_id,title,content,type,status,create_time,comment_count,score,post_area,post_img
     </sql>
     <sql id="insertFields">
         user_id,title,content,type,status,create_time,comment_count,score,post_area,post_img
@@ -13,7 +13,7 @@
         select
         <include refid="selectFields"/>
         from discuss_post
-        where status!=2
+        where status!=2 and post_area = #{postArea}
         <if test="userId!=0">
             and user_id = #{userId}
         </if>
@@ -25,7 +25,7 @@
 
 
     <select id="selectDiscussPostRows" resultType="int">
-        select count(id) from discuss_post where status!=2
+        select count(id) from discuss_post where status!=2 and post_area = #{postArea}
         <if test="userId!=0">and user_id = #{userId}</if>
     </select>
 
@@ -34,17 +34,17 @@
         values(#{userId},#{title},#{content},#{type},#{status},#{createTime},#{commentCount},#{score},#{postArea},#{postImg})
     </insert>
 
-<!--    <select id="selectDiscussPostById" resultType="DiscussPost">-->
-<!--        select-->
-<!--        <include refid="selectFields"/>-->
-<!--        from discuss_post-->
-<!--        where status!=2 and id = #{id}-->
-<!--    </select>-->
+    <select id="selectDiscussPostById" resultType="DiscussPost">
+        select
+        <include refid="selectFields"/>
+        from discuss_post
+        where status!=2 and id = #{id}
+    </select>
 
-<!--    &lt;!&ndash; 更新帖子的评论数量&ndash;&gt;-->
-<!--    <insert id="updateCommentCount">-->
-<!--        update discuss_post set comment_count = #{count} where id = #{postId}-->
-<!--    </insert>-->
+    <!-- 更新帖子的评论数量-->
+    <insert id="updateCommentCount">
+        update discuss_post set comment_count = #{count} where id = #{postId}
+    </insert>
 
 <!--    <update id="updateType">-->
 <!--        update discuss_post set type = #{type} where id=#{id}-->

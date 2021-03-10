@@ -18,15 +18,15 @@ public class MapperTest {
     @Autowired
     private DiscussPostMapper discussPostMapper;
 
-    @Test
-    public void discussPostTest(){
-        List<DiscussPost> posts = discussPostMapper.selectDiscussPosts(0,0,10);
-        for(DiscussPost post : posts){
-            System.out.println(post);
-        }
-        int rows = discussPostMapper.selectDiscussPostRows(132);
-        System.out.println(rows);
-    }
+//    @Test
+//    public void discussPostTest(){
+//        List<DiscussPost> posts = discussPostMapper.selectDiscussPosts(0,0,10);
+//        for(DiscussPost post : posts){
+//            System.out.println(post);
+//        }
+//        int rows = discussPostMapper.selectDiscussPostRows(132);
+//        System.out.println(rows);
+//    }
 
     @Test
     public void testSensitiveFilter(){
@@ -34,5 +34,4 @@ public class MapperTest {
         text = sensitiveFilter.filter(text);
         System.out.println(text);
     }
-
-}
+ }
