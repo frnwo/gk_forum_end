@@ -49,7 +49,7 @@ public class DiscussPostController implements ForumConstants {
         User user = hostHolder.get();
         //当user为空时，说明还未登录，返回浏览器403的无权限信息，中断处理
         if (user == null) {
-            res.put("err","您尚未登录");
+            res.put("tokenErr","1");
             return res;
         }
         DiscussPost discussPost = new DiscussPost();
@@ -78,6 +78,7 @@ public class DiscussPostController implements ForumConstants {
     @GetMapping("/detail/{postId}")
     public Map<String,Object> getDiscussPostDetail(@PathVariable("postId") int postId, Page page) {
         Map<String,Object> res = new HashMap<>();
+
         DiscussPost post = discussPostService.findDiscussPostById(postId);
         res.put("post", post);
         //作者

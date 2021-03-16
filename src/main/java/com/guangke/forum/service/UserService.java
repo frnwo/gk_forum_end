@@ -152,4 +152,8 @@ public class  UserService {
         int rows = userMapper.updateHeader(userId, headerUrl);
         return rows;
     }
+
+    public User findUserByName(String username) {
+        return userMapper.selectByUsername(username);
+    }
 }

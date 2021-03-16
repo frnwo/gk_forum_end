@@ -122,7 +122,11 @@ public class LoginController implements ForumConstants {
         }
     }
     @GetMapping("/logout")
-    public String logOut(@CookieValue("ticket") String ticket) {
+    public String logOut(@CookieValue(value = "ticket",required = false) String ticket) {
+//        System.out.println(ticket);
+        if(ticket==null){
+            return "tokenErr";
+        }
         userService.logOut(ticket);
         //login有两个 重定向默认跳转方式为get
         return "ok";

@@ -52,11 +52,11 @@ public class UserController implements ForumConstants {
         //获取该请求的用户
         User user = hostHolder.get();
         if(user==null) {
-            res.put("err", "您无权访问该接口");
+            res.put("tokenErr", "1");
             return res;
         }
         if (StringUtils.isBlank(oldPassword)) {
-            res.put("err","旧密码不能为空");
+            res.put("err","原密码不能为空");
             return res;
         }
         if (StringUtils.isBlank(newPassword)) {
@@ -71,7 +71,7 @@ public class UserController implements ForumConstants {
         //对提交的旧密码加密
         oldPassword = ForumUtils.md5(oldPassword + salt);
         if (!oldPassword.equals(password)) {
-            res.put("err","旧密码不正确");
+            res.put("err","原密码不正确");
             return res;
         }
         //进行到这里时说明可以对数据库的密码修改
