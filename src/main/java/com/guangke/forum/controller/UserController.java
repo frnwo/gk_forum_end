@@ -3,6 +3,8 @@ package com.guangke.forum.controller;
 
 import com.guangke.forum.pojo.User;
 
+import com.guangke.forum.service.FollowService;
+import com.guangke.forum.service.LikeService;
 import com.guangke.forum.service.UserService;
 import com.guangke.forum.util.ForumConstants;
 import com.guangke.forum.util.ForumUtils;
@@ -42,6 +44,12 @@ public class UserController implements ForumConstants {
 
     @Value("${forum.path.uploadImage}")
     private  String uploadPath;
+
+    @Autowired
+    private LikeService likeService;
+
+    @Autowired
+    private FollowService followService;
 
     /**
      * 修改密码
@@ -149,5 +157,36 @@ public class UserController implements ForumConstants {
         } catch (Exception e) {
             logger.error("读取/响应文件失败:" + e.getMessage());
         }
+    }
+
+    //个人详情页面
+    @GetMapping(path = "/profile/detail/{userId}")
+    public Map<String,Object> getProfilePage(@PathVariable("userId") int userId) {
+        Map<String,Object> res = new HashMap<>();
+        User user = userService.findUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("当前用户不存在！");
+        }
+        //点赞数
+        int likeCount = likeService.findUserLikeCount(userId);
+        res.put("likeCount", likeCount);
+
+        //关注数
+        long followeeCount = followService.getFolloweeCount(userId, ENTITY_TYPE_USER);
+        res.put("followeeCount", followeeCount);
+
+        //粉丝数
+        long followerCount = followService.getFollowerCount(ENTITY_TYPE_USER, userId);
+        res.put("followerCount", followerCount);
+
+        //当前用户对该实体的关注状态
+        boolean hasFollowed = false;
+        //如果未登录则默认为false显示为 未关注,登录时查询是否有关注该实体
+        if (hostHolder.get() != null) {
+            hasFollowed = followService.hasFollowed(hostHolder.get().getId(), ENTITY_TYPE_USER, userId);
+        }
+        res.put("hasFollowed", hasFollowed);
+        res.put("user",user);
+        return res;
     }
 }

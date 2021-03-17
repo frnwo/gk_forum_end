@@ -44,5 +44,11 @@ public class DiscussPostService {
     public int updateCommentCount(int postId, int count) {
         return discussPostMapper.updateCommentCount(postId, count);
     }
+    public int updateStatus(int postId, int status) {
+        return discussPostMapper.updateStatus(postId, status);
+    }
+    public List<DiscussPost> search(String query){
+        return discussPostMapper.search(query);
+    }
 }
 

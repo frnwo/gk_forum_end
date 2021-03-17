@@ -19,4 +19,17 @@ public interface ForumConstants {
      * 2 ：评论实体
      */
     int ENTITY_TYPE_COMMENT = 2;
+
+    /**
+     * 3: 用户实体
+     */
+    int ENTITY_TYPE_USER = 3;
+
+    /**
+     * 帖子status : 0:正常 1：加精 2：删除
+     */
+
+    int STATUS_DELETE = 2;
+
+
 }

@@ -137,13 +137,18 @@ public class MessageController implements ForumConstants {
     }
 
     @PostMapping("/letter/send")
-    @ResponseBody
-    public String sendMessage(String toName, String content) {
+    public Map<String,Object> sendMessage(String toName, String content) {
+        Map<String,Object> res = new HashMap<>();
+        User user = hostHolder.get();
+        if(user == null){
+            res.put("tokenErr",1);
+            return res;
+        }
         User target = userService.findUserByName(toName);
         if (target == null) {
-            return ForumUtils.getJSONString(1, "发送的用户不存在");
+            res.put("noExist", "发送的用户不存在");
+            return res;
         }
-        User user = hostHolder.get();
         Message message = new Message();
         message.setContent(content);
         message.setCreateTime(new Date());
@@ -155,8 +160,9 @@ public class MessageController implements ForumConstants {
             message.setConversationId(message.getToId() + "_" + message.getFromId());
         }
         messageService.addMessage(message);
-        //0 成功
-        return ForumUtils.getJSONString(0);
+        // 成功
+        res.put("status", "ok");
+        return res;
     }
 
     //系统通知

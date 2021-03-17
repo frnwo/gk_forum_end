@@ -7,9 +7,11 @@ import com.guangke.forum.pojo.Page;
 import com.guangke.forum.pojo.User;
 import com.guangke.forum.service.CommentService;
 import com.guangke.forum.service.DiscussPostService;
+import com.guangke.forum.service.LikeService;
 import com.guangke.forum.service.UserService;
 import com.guangke.forum.util.ForumConstants;
 import com.guangke.forum.util.HostHolder;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +43,9 @@ public class DiscussPostController implements ForumConstants {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private LikeService likeService;
 
     @PostMapping("/add")
     public Map addDiscussPost(String title,String content,String postArea, MultipartFile[] files) {
@@ -85,9 +90,12 @@ public class DiscussPostController implements ForumConstants {
         User user = userService.findUserById(post.getUserId());
         res.put("user", user);
 
-        //当前用户对该帖子的点赞状态,如果没登录，就放回0，显示赞
-//        int likeStatus = hostHolder.get() == null ? 0 : likeService.findLikeStatus(hostHolder.get().getId(), ENTITY_TYPE_DISCUSSPOST, postId);
-//        model.addAttribute("likeStatus", likeStatus);
+//        当前用户对该帖子的点赞状态,如果没登录，就放回0，显示赞
+        int likeStatus = hostHolder.get() == null ? 0 : likeService.findLikeStatus(hostHolder.get().getId(), ENTITY_TYPE_DISCUSSPOST, postId);
+        res.put("likeStatus", likeStatus);
+//帖子点赞数量
+        long likeCount = likeService.findLikeCount(ENTITY_TYPE_DISCUSSPOST, postId);
+        res.put("likeCount", likeCount);
         /**
          * 分页
          */
@@ -112,13 +120,13 @@ public class DiscussPostController implements ForumConstants {
             User commentUser = userService.findUserById(comment.getUserId());
             cvoMap.put("user", commentUser);
 
-//            //评论的点赞数量  小注意事项：基本类型不存在引用，java 会复制基本类型的值
-//            likeCount = likeService.findLikeCount(ENTITY_TYPE_COMMENT, comment.getId());
-//            cvoMap.put("likeCount", likeCount);
+            //评论的点赞数量  小注意事项：基本类型不存在引用，java 会复制基本类型的值
+            likeCount = likeService.findLikeCount(ENTITY_TYPE_COMMENT, comment.getId());
+            cvoMap.put("likeCount", likeCount);
 
-//            //当前用户对该评论的点赞状态
-//            likeStatus = hostHolder.get() == null ? 0 : likeService.findLikeStatus(hostHolder.get().getId(), ENTITY_TYPE_COMMENT, comment.getId());
-//            cvoMap.put("likeStatus", likeStatus);
+            //当前用户对该评论的点赞状态
+            likeStatus = hostHolder.get() == null ? 0 : likeService.findLikeStatus(hostHolder.get().getId(), ENTITY_TYPE_COMMENT, comment.getId());
+            cvoMap.put("likeStatus", likeStatus);
 
             /**
              * 根据评论id查询出其所有回复,不管这个回复有没有目的用户id(target_id)
@@ -138,11 +146,11 @@ public class DiscussPostController implements ForumConstants {
                 User targetUser = reply.getTargetId() == 0 ? null : userService.findUserById(reply.getTargetId());
                 rvoMap.put("targetUser", targetUser);
 
-                //回复的点赞数量
+//                回复的点赞数量
 //                likeCount = likeService.findLikeCount(ENTITY_TYPE_COMMENT, comment.getId());
 //                rvoMap.put("likeCount", likeCount);
-
-                //当前用户对该回复的点赞状态
+//
+//                当前用户对该回复的点赞状态
 //                likeStatus = hostHolder.get() == null ? 0 : likeService.findLikeStatus(hostHolder.get().getId(), ENTITY_TYPE_COMMENT, comment.getId());
 //                rvoMap.put("likeStatus", likeStatus);
                 rvoList.add(rvoMap);
@@ -156,6 +164,57 @@ public class DiscussPostController implements ForumConstants {
         res.put("totalPage",page.getTotal());
         return res;
     }
+
+    @GetMapping("/posts/{userId}")
+    public List<DiscussPost> getPosts(@PathVariable("userId") int userId){
+        List<DiscussPost> posts = discussPostService.findDiscussPosts(userId,0,100,null);
+        return posts;
+    }
+
+    //帖子删除
+    @PostMapping("/delete")
+    public Map<String,Object> setDelete(int postId) {
+        Map<String,Object> res = new HashMap<>();
+        User u = hostHolder.get();
+        if(u == null){
+            res.put("tokenErr","1");
+            return res;
+        }
+        DiscussPost post = discussPostService.findDiscussPostById(postId);
+        //发帖者和管理员才能删帖
+        if(u.getType()==1 || post.getUserId() == u.getId()){
+            discussPostService.updateStatus(postId, STATUS_DELETE);
+            res.put("status","ok");
+        }else{
+            res.put("status","err");
+        }
+        return res;
+    }
+
+    //根据content或title 搜索帖子
+    @GetMapping("/search")
+    public Map<String,Object> search(String query){
+        Map<String,Object> res = new HashMap<>();
+        if(StringUtils.isBlank(query)){
+            res.put("err","关键词不能为空");
+            return res;
+        }
+        List<DiscussPost> posts = discussPostService.search(query);
+        List<Map<String,Object>> resList = new ArrayList<>();
+        if(posts.size()!=0){
+            for(DiscussPost p : posts){
+                Map<String,Object> map = new HashMap<>();
+                map.put("post",p);
+                User user = userService.findUserById(p.getUserId());
+                map.put("user",user);
+                resList.add(map);
+            }
+        }
+        res.put("posts",resList);
+        return res;
+    }
+
+
 
     //帖子置顶
 //    @PostMapping("/top")
@@ -194,22 +253,5 @@ public class DiscussPostController implements ForumConstants {
 //
 //        return ForumUtils.getJSONString(0);
 //    }
-
-    //帖子删除
-//    @PostMapping("/delete")
-//    @ResponseBody
-//    public String setDelete(int postId) {
-//        discussPostService.updateStatus(postId, STATUS_DELETE);
-//        //触发发帖，更新es
-//        Event event = new Event()
-//                .setTopic(TOPIC_DELETE)
-//                //搜索帖子时需要显示作者
-//                .setUserId(hostHolder.get().getId())
-//                .setEntityType(ENTITY_TYPE_DISCUSSPOST)
-//                .setEntityId(postId);
-//        eventProducer.fireEvent(TOPIC_PUBLISH, event);
-//        return ForumUtils.getJSONString(0);
-//    }
-
 
 }

@@ -1,5 +1,7 @@
 package com.guangke.forum.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 public class Message {
@@ -14,6 +16,7 @@ public class Message {
      */
     private String conversationId;
     private int status;
+    @JsonFormat(timezone = "GMT+8")
     private Date createTime;
 
     public int getId() {
