@@ -41,6 +41,10 @@ public class DiscussPostService {
     public DiscussPost findDiscussPostById(int id) {
         return discussPostMapper.selectDiscussPostById(id);
     }
+    //也能查出被拉黑的帖子
+    public DiscussPost findDiscussPostById2(int id) {
+        return discussPostMapper.selectDiscussPostById2(id);
+    }
     public int updateCommentCount(int postId, int count) {
         return discussPostMapper.updateCommentCount(postId, count);
     }
@@ -49,6 +53,10 @@ public class DiscussPostService {
     }
     public List<DiscussPost> search(String query){
         return discussPostMapper.search(query);
+    }
+    //0:普通 1：置顶
+    public int updateType(int postId, int type) {
+        return discussPostMapper.updateType(postId, type);
     }
 }
 

@@ -43,15 +43,20 @@
         from discuss_post
         where status!=2 and id = #{id}
     </select>
-
+    <select id="selectDiscussPostById2" resultType="DiscussPost">
+        select
+        <include refid="selectFields"/>
+        from discuss_post
+        where id = #{id}
+    </select>
     <!-- 更新帖子的评论数量-->
     <insert id="updateCommentCount">
         update discuss_post set comment_count = #{count} where id = #{postId}
     </insert>
 
-<!--    <update id="updateType">-->
-<!--        update discuss_post set type = #{type} where id=#{id}-->
-<!--    </update>-->
+    <update id="updateType">
+        update discuss_post set type = #{type} where id=#{id}
+    </update>
 
     <update id="updateStatus" >
         update discuss_post set status = #{status} where id=#{id}

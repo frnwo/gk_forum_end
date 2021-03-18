@@ -40,4 +40,11 @@
     <update id="updateStatus">
         update user set status = #{status} where id = #{id}
     </update>
+
+    <select id="searchByUsername" resultType="User">
+        select <include refid="selectFields"></include> from user
+        where username like concat('%',#{username},'%')
+    </select>
+
+
 </mapper>

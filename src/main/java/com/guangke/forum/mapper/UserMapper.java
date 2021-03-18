@@ -3,6 +3,8 @@ package com.guangke.forum.mapper;
 import com.guangke.forum.pojo.User;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface UserMapper {
     User selectById(int id);
@@ -19,4 +21,5 @@ public interface UserMapper {
 
     int insertUser(User user);
 
+    List<User> searchByUsername(String username);
 }

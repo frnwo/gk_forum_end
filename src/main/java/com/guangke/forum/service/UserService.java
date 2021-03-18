@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class  UserService {
@@ -90,7 +87,7 @@ public class  UserService {
 
     public ActivationStatus activate(int userId, String activationCode) {
         User u = userMapper.selectById(userId);
-        if (u.getStatus() == 1) {
+        if (u.getStatus() == 1 || u.getStatus() == 2) {
             return ActivationStatus.ACTIVATION_REPEAT;
         } else if (u.getActivationCode().equals(activationCode)) {
             userMapper.updateStatus(userId, 1);
@@ -155,5 +152,13 @@ public class  UserService {
 
     public User findUserByName(String username) {
         return userMapper.selectByUsername(username);
+    }
+
+    public List<User> searchByUsername(String username){
+        return  userMapper.searchByUsername(username);
+    }
+
+    public int updateStatus(int id, int status){
+        return userMapper.updateStatus(id,status);
     }
 }

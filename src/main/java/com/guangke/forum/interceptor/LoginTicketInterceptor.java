@@ -42,8 +42,11 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
             if (loginTicket != null && loginTicket.getStatus() == 0 && loginTicket.getExpired().after(new Date())) {
                 //查询用户
                 User user = userService.findUserById(loginTicket.getUserId());
-                //在请求中持有用户
-                hostHolder.set(user);
+                //在请求中持有用户 只有status为1，才能持有。
+                // 就是未激活0和拉黑2的都不行
+                if(user.getStatus() == 1){
+                    hostHolder.set(user);
+                }
             }
         }
 //        System.out.println("---------检查用户---------");

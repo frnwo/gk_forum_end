@@ -18,9 +18,12 @@ public interface DiscussPostMapper {
     int insertDiscussPost(DiscussPost discussPost);
 
     DiscussPost selectDiscussPostById(int id);
+    DiscussPost selectDiscussPostById2(int id);
+
     int updateCommentCount(int postId, int count);
 
     int updateStatus(int id, int status);
 
     List<DiscussPost> search(String query);
+    int updateType(int id, int type);
 }
