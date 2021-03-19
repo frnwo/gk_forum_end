@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guangke.forum.mapper.CarouselMapper">
+    <update id="updateImg">
+        update carousel set
+        <if test="num==1">
+            url1 = #{url}
+        </if>
+        <if test="num==2">
+            url2 = #{url}
+        </if>
+        <if test="num==3">
+            url3 = #{url}
+        </if>
+        where id = #{id}
+    </update>
+    <select id="selectImg" resultType="Carousel">
+        select url1,url2,url3 from carousel where id = 1;
+    </select>
+</mapper>
