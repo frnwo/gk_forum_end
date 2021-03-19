@@ -26,10 +26,24 @@ public interface ForumConstants {
     int ENTITY_TYPE_USER = 3;
 
     /**
+     * 系统用户
+     */
+    int SYSTEM_USER = 1;
+
+    /**
      * 帖子status : 0:正常 1：加精 2：删除
      */
 
     int STATUS_DELETE = 2;
 
+    /**
+     * 主题：评论
+     */
+    String TOPIC_COMMENT = "comment";
+
+    /**
+     * 主题: 点赞
+     */
+    String TOPIC_LIKE = "like";
 
 }

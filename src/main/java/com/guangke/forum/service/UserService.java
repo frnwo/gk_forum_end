@@ -10,6 +10,7 @@ import com.guangke.forum.util.MailClient;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -75,6 +76,10 @@ public class  UserService {
         String headerUrl = String.format("http://images.nowcoder.com/head/%dt.png", new Random().nextInt(1000));
         user.setHeaderUrl(headerUrl);
         userMapper.insertUser(user);
+        return map;
+    }
+    @Async
+    public void sendMail(User user){
         //激活邮件
         String url = domain + contextPath + "/activation/" + user.getId() + "/" + user.getActivationCode();
         String content = "<div>" +
@@ -82,7 +87,6 @@ public class  UserService {
                 "<p>您正在注册广科校园WebAPP,请点击<a href='"+url+"'>此链接</a>激活您的账号</p>"+
                 "</div>";
         mailClient.sendMail(user.getEmail(), "广科论坛webApp激活账号", content);
-        return map;
     }
 
     public ActivationStatus activate(int userId, String activationCode) {

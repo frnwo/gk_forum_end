@@ -47,6 +47,7 @@ public class LoginController implements ForumConstants {
         Map<String,Object> res = new HashMap<>();
         if (map.isEmpty()) {
             res.put("status","success");
+            userService.sendMail(user);
             return res;
         } else {
             res.put("usernameMsg",map.get("usernameMsg"));
